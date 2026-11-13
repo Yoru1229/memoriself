@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>我的小本本</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chiron+GoRound+TC:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f4fb;--card:#fffefe;--ink:#4a4660;--mute:#6f6b8a;--line:#e6e1f1;--ac:#7154a8;--soft:#eee8f9;--ok:#5ea68e;--win:#e2f3ec;--rose:#b04565;--rose-soft:#fbe6ec;color-scheme:light}
+
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.65 "Chiron GoRound TC",-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+h1{font-size:22px;margin:0 0 12px}h2{font-size:16px;margin:0 0 10px}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:7px 13px}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.pri{background:var(--ac);border-color:var(--ac);color:#fff}
+input,textarea{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);max-width:100%}
+textarea{width:100%;min-height:180px;resize:vertical}
+#top{display:none;position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);padding:8px 12px;align-items:center;gap:10px}
+#side{position:fixed;inset:0 auto 0 0;width:230px;background:var(--card);border-right:1px solid var(--line);padding:calc(16px + env(safe-area-inset-top,0)) 12px 16px;overflow:auto;z-index:10}
+#side b{display:block;font-size:18px;margin:0 6px 12px}
+#side small{display:block;color:var(--mute);font-size:12px;margin:14px 8px 4px}
+#side button{display:block;width:100%;text-align:left;border:0;background:none;margin-bottom:2px}
+#side button.on{background:var(--soft);color:var(--ac);font-weight:600}
+#mask{display:none;position:fixed;inset:0;background:#0006;z-index:9}
+main{margin-left:230px;max-width:760px;padding:24px 18px 60px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px}
+.mute{color:var(--mute);font-size:13px}
+.wk{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.wk button{padding:8px 0;text-align:center;border-radius:12px;line-height:1.3}
+.wk button b{display:block;font-size:19px}
+.wk .sel{background:var(--ac);border-color:var(--ac);color:#fff}
+.wk .tdy:not(.sel){border-color:var(--ink)}
+.dots{height:8px;display:flex;justify-content:center;gap:2px;margin-top:3px}
+.dots i{width:6px;height:6px;border-radius:50%}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.chip{background:var(--soft);color:var(--ac);border-radius:20px;padding:4px 12px;font-size:14px}
+.todo,.item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;border-left:5px solid var(--c,var(--line));background:color-mix(in srgb,var(--c,transparent) 10%,var(--card));margin-bottom:6px}
+.item{border-left-color:var(--line);background:none;border-bottom:1px solid var(--line);border-radius:0}
+.todo .t,.item .t{flex:1;cursor:text;word-break:break-word}
+.done .t{text-decoration:line-through;opacity:.5}
+.sw{width:22px;height:22px;border-radius:50%;border:2px solid transparent;padding:0;background:var(--c)}
+.sw.on{border-color:var(--ink)}
+.x{border:0;background:none;color:var(--mute);padding:2px 8px}
+.add{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}.add input[type=text]{flex:1;min-width:140px}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.wd{text-align:center;font-size:12px;color:var(--mute)}
+.d{aspect-ratio:1;border-radius:50%;border:2px solid transparent;padding:0;background:none;position:relative}
+.d.e{visibility:hidden}.d.tdy{border-color:var(--ink)}
+.d.has{background:var(--soft);color:var(--ac);font-weight:700}
+.d.p{background:var(--rose);color:#fff}.d.mb{background:var(--rose-soft);border:2px dotted var(--rose);color:var(--rose)}.d.pred{border:2px dashed var(--rose);color:var(--rose)}.d.win{background:var(--win)}
+.d.ov::after{content:"";position:absolute;bottom:3px;left:calc(50% - 3px);width:6px;height:6px;border-radius:50%;background:var(--ok)}
+.big{font-size:28px;font-weight:700;color:var(--ac);line-height:1.2}
+.imgs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.imgs div{position:relative}.imgs img{height:110px;border-radius:10px;display:block;max-width:100%}
+.imgs .x{position:absolute;top:2px;right:2px;background:#000a;color:#fff;border-radius:50%}
+.tg{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+select{font:inherit;color:var(--ink);border:1px solid var(--line);background:var(--card);border-radius:10px;padding:6px 10px}
+.hud{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:12px}
+.st{border-radius:14px;padding:10px 14px;background:color-mix(in srgb,var(--k) 22%,var(--card));border:1px solid var(--line)}
+.st:nth-child(1){--k:#e8c67a}.st:nth-child(2){--k:#7fc4a8}.st:nth-child(3){--k:#a592cf}.st:nth-child(4){--k:#7fa6d1}.st:nth-child(5){--k:#e3a876}.st:nth-child(6){--k:#e49aab}
+.st small{display:block;color:var(--mute);font-size:12px}.st b{font-size:22px}
+.bar{height:12px;border-radius:9px;background:var(--line);overflow:hidden;margin-bottom:14px}.bar i{display:block;height:100%;background:var(--ok)}
+.tabs{display:flex;gap:4px;background:var(--line);padding:4px;border-radius:12px}.tabs button{border:0;background:none;padding:5px 12px}.tabs .on{background:var(--card);font-weight:600}
+.board{columns:2 220px;column-gap:12px}
+.wc{display:block;width:100%;text-align:left;break-inside:avoid;margin-bottom:12px;padding:14px;position:relative;border-radius:14px;background:color-mix(in srgb,var(--k,#d9822b) 16%,var(--card))}
+.wc:nth-child(4n+1){--k:#e8a0a8}.wc:nth-child(4n+2){--k:#ecd08a}.wc:nth-child(4n+3){--k:#93c3df}.wc:nth-child(4n+4){--k:#b8a6dc}
+.wc.done{--k:#8fcdb4}.wc.rej{--k:#8a8a8a;opacity:.7}.wc.rej h3{text-decoration:line-through}
+.wc img{width:100%;max-height:220px;object-fit:cover;border-radius:10px;display:block;margin-bottom:8px}
+.wc h3{margin:0 0 4px;font-size:17px}.wc p{margin:0 0 8px;font-size:14px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.meta{display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.stamp{position:absolute;right:8px;top:8px;border:2px solid var(--ok);color:var(--ok);background:var(--card);padding:0 8px;border-radius:8px;font-weight:700;font-size:13px;transform:rotate(8deg)}.stamp.r{border-color:var(--mute);color:var(--mute)}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 8px}.tag{font-size:12px;padding:1px 9px;border-radius:12px;background:var(--card);border:1px solid var(--line)}
+button.pick.on{background:var(--soft);border-color:var(--ac)}
+#modal{display:none;position:fixed;inset:0;background:#0007;overflow:auto;padding:24px 12px;z-index:20;align-items:flex-start;justify-content:center}#modal.on{display:flex}
+.sheet{background:var(--card);border-radius:18px;width:100%;max-width:500px;padding:20px}.sheet h2{font-size:20px}
+.sheet label{display:block;font-weight:600;margin-top:12px;font-size:14px}.sheet label input,.sheet label textarea{width:100%;font-weight:400;margin-top:4px}.sheet textarea{min-height:80px}
+.sheet .pre,.sheet>img{width:100%;max-height:300px;object-fit:cover;border-radius:12px;margin-top:8px;display:block}
+.kv{border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin:8px 0;white-space:pre-wrap}.kv small{display:block;color:var(--mute)}
+.cm{background:var(--bg);border-radius:10px;padding:6px 10px;margin:6px 0;font-size:14px}.cm small{display:block;color:var(--mute)}
+.sheet .row{justify-content:flex-end;margin-top:16px}
+@media(max-width:800px){#top{display:flex}#side{transform:translateX(-100%);transition:transform .2s}body.open #side{transform:none}body.open #mask{display:block}main{margin-left:0;padding-top:14px}}
+@media(prefers-reduced-motion:reduce){#side{transition:none}}
+</style>
+</head>
+<body>
+<div id="top"><button data-a="menu" aria-label="選單">☰</button><b>我的小本本</b></div>
+<div id="mask" data-a="menu"></div>
+<nav id="side"></nav>
+<div id="modal"></div>
+<main id="main"></main>
+
+<script>
+const K='planner-v1',COL=['#d98a9b','#e3a876','#7fb8a4','#7fa6d1','#a592cf','#a39aa3'];
+const TOOLS={diary:'日記',period:'月經週期',wish:'願望清單',cd:'倒數計時'};
+const def=()=>({todos:[],wish:[],cd:[],diary:{},period:{},pmaybe:{},premind:{},tools:{diary:1,period:1,wish:1,cd:1}});
+let db=(()=>{try{const d=JSON.parse(localStorage.getItem(K));if(d)return Object.assign(def(),d)}catch(e){}return def()})();
+db.tools=Object.assign({},def().tools,db.tools);
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(db))}catch(e){alert('瀏覽器儲存空間已滿，請刪除一些日記圖片，或先匯出備份。')}};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const fmt=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const parse=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const addD=(s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return fmt(d)};
+const dn=s=>{const[y,m,d]=s.split('-').map(Number);return Math.round(Date.UTC(y,m-1,d)/864e5)};
+const ds=n=>{const d=new Date(n*864e5);return d.getUTCFullYear()+'-'+pad(d.getUTCMonth()+1)+'-'+pad(d.getUTCDate())};
+const md=s=>{const d=parse(s);return(d.getMonth()+1)+'/'+d.getDate()};
+const today=()=>fmt(new Date());
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const WD=['日','一','二','三','四','五','六'];
+const first=d=>new Date(d.getFullYear(),d.getMonth(),1);
+let ui={view:'home',sel:today(),w:0,nc:COL[0],dm:first(new Date()),pm:first(new Date()),de:null,draft:null,pmode:'sure'};
+
+function calHtml(m,act,cls){
+  const y=m.getFullYear(),mo=m.getMonth(),n=new Date(y,mo+1,0).getDate();
+  let h=WD.map(w=>'<div class="wd">'+w+'</div>').join('')+'<i></i>'.repeat(0);
+  for(let i=0;i<m.getDay();i++)h+='<button class="d e" tabindex="-1" aria-hidden="true"></button>';
+  for(let d=1;d<=n;d++){const s=y+'-'+pad(mo+1)+'-'+pad(d);h+='<button class="d '+cls(s)+(s===today()?' tdy':'')+'" data-a="'+act+'" data-v="'+s+'">'+d+'</button>'}
+  return h;
+}
+const monthNav=(k)=>'<div class="nav"><button data-a="mv" data-k="'+k+'" data-v="-1" aria-label="上個月">‹</button><strong>'+ui[k].getFullYear()+' 年 '+(ui[k].getMonth()+1)+' 月</strong><button data-a="mv" data-k="'+k+'" data-v="1" aria-label="下個月">›</button></div>';
+
+/* ---------- views ---------- */
+function home(){
+  const t=parse(today());t.setDate(t.getDate()-(t.getDay()+6)%7+ui.w*7);
+  const mon=fmt(t);let wk='';
+  for(let i=0;i<7;i++){
+    const s=addD(mon,i),cs=db.todos.filter(x=>x.date===s&&!x.done).slice(0,4);
+    wk+='<button class="'+(s===ui.sel?'sel ':'')+(s===today()?'tdy':'')+'" data-a="sel" data-v="'+s+'">'+'一二三四五六日'[i]+'<b>'+parse(s).getDate()+'</b><div class="dots">'+cs.map(c=>'<i style="background:'+(s===ui.sel?'#fff':c.c)+'"></i>').join('')+'</div></button>';
+  }
+  const chips=db.tools.cd?db.cd.slice().sort((a,b)=>a.date<b.date?-1:1).map(c=>{const n=dn(c.date)-dn(today());return n<-0?'':'<span class="chip">'+esc(c.name)+' '+(n===0?'就是今天':'還有 '+n+' 天')+'</span>'}).join(''):'';
+  const list=db.todos.filter(x=>x.date===ui.sel);
+  return '<h1>本週 '+md(mon)+' – '+md(addD(mon,6))+'</h1>'+(chips?'<div class="chips">'+chips+'</div>':'')+
+  '<div class="card"><div class="nav"><button data-a="wk" data-v="-1" aria-label="上週">‹</button><button data-a="wk" data-v="0">回到本週</button><button data-a="wk" data-v="1" aria-label="下週">›</button></div><div class="wk">'+wk+'</div></div>'+
+  '<div class="card"><h2>'+md(ui.sel)+'（週'+WD[parse(ui.sel).getDay()]+'）待辦</h2>'+
+  (list.length?list.map(x=>'<div class="todo'+(x.done?' done':'')+'" style="--c:'+x.c+'"><input type="checkbox" data-a="tg" data-id="'+x.id+'"'+(x.done?' checked':'')+' aria-label="完成"><span class="t" data-a="ed" data-id="'+x.id+'" title="點一下編輯">'+esc(x.t)+'</span><button class="sw" style="--c:'+x.c+'" data-a="col" data-id="'+x.id+'" aria-label="換顏色"></button><button class="x" data-a="del" data-id="'+x.id+'" aria-label="刪除">✕</button></div>').join(''):'<p class="mute">這天還沒有待辦，在下面新增一筆。</p>')+
+  '<div class="add"><input type="text" id="nt" placeholder="新增待辦…" maxlength="100">'+COL.map(c=>'<button class="sw'+(c===ui.nc?' on':'')+'" style="--c:'+c+'" data-a="nc" data-v="'+c+'" aria-label="顏色"></button>').join('')+'<button class="pri" data-a="add">新增</button></div></div>';
+}
+function diary(){
+  const has=s=>db.diary[s]?'has':'';
+  let h='<h1>日記</h1><div class="card">'+monthNav('dm')+'<div class="grid">'+calHtml(ui.dm,'de',has)+'</div><p class="mute">有底色的日子已有日記，點日期開始寫。</p></div>';
+  if(ui.de){
+    const d=ui.draft;
+    h+='<div class="card"><h2>'+ui.de+'（週'+WD[parse(ui.de).getDay()]+'）</h2><textarea id="dt" placeholder="今天發生了什麼…">'+esc(d.t)+'</textarea><div class="imgs">'+d.imgs.map((s,i)=>'<div><img src="'+s+'" alt="日記圖片"><button class="x" data-a="rmimg" data-v="'+i+'" aria-label="移除圖片">✕</button></div>').join('')+'</div><div class="row"><label class="mute">加入圖片 <input type="file" id="im" accept="image/*" multiple></label></div><div class="row"><button class="pri" data-a="dsave">儲存日記</button><button data-a="dclose">關閉</button>'+(db.diary[ui.de]?'<button data-a="ddel">刪除這篇</button>':'')+'</div></div>';
+  }
+  return h;
+}
+function pAn(){
+  const ks=Object.keys(db.period).map(dn).sort((a,b)=>a-b),ps=[];
+  ks.forEach(n=>{const l=ps[ps.length-1];if(l&&n-l.e<=3)l.e=n;else ps.push({s:n,e:n})});
+  const mb=new Set(Object.keys(db.pmaybe).map(dn));
+  /* 起始日不確定：從確定的第一天往前找「可能有來」的日子，取中間值當估算起始日 */
+  ps.forEach((p,i)=>{
+    const lim=i?ps[i-1].e:-1e9;let a=p.s;
+    for(let d=p.s-1,miss=0;miss<2&&d>lim&&d>p.s-15;d--){if(mb.has(d)){a=d;miss=0}else miss++}
+    p.t=p.s;if(a<p.s){p.u=a;p.t=Math.floor((a+p.s)/2)}
+  });
+  const cy=[],cc=[];
+  for(let i=1;i<ps.length;i++){const c=ps[i].t-ps[i-1].t;if(c>=15&&c<=70){cy.push(c);if(!ps[i].u&&!ps[i-1].u)cc.push(c)}}
+  const r=(cc.length>=2?cc:cy).slice(-6),avg=r.length?Math.round(r.reduce((a,b)=>a+b)/r.length):28;
+  const sure=ps.filter(p=>!p.u),L=(sure.length?sure:ps).slice(-6),len=L.length?Math.round(L.reduce((a,p)=>a+p.e-p.t+1,0)/L.length):5;
+  const last=ps[ps.length-1],pr=[];
+  if(last)for(let k=1;k<=3;k++){const s=last.t+avg*k;pr.push({s,e:s+len-1,ov:s-14,ws:s-18,we:s-13})}
+  return{ps,avg,len,pr,n:r.length,fz:ps.filter(p=>p.u).length,lastU:!!(last&&last.u)};
+}
+function period(){
+  const a=pAn(),t=dn(today());let sum;
+  if(!a.ps.length)sum='<div class="big">還沒有紀錄</div><p class="mute">點下方日曆標記月經日。記不清楚是哪天開始的話，可以切換成「不確定」再標記。</p>';
+  else{const nx=a.pr[0],late=t-nx.s;
+    sum='<div class="big">'+(late>0?'已延後 '+late+' 天':late===0?'預測今天開始':md(ds(nx.s))+'　還有 '+(-late)+' 天')+'</div><p class="mute">平均週期 '+a.avg+' 天・平均經期 '+a.len+' 天・已記錄 '+a.ps.length+' 次'+(a.fz?'（其中 '+a.fz+' 次起始日為估算）':'')+(a.n<2?'（紀錄還少，預測僅供參考）':'')+'</p>'+(a.lastU?'<p class="mute">上次的起始日是估算的，預測可能有幾天誤差。</p>':'');}
+  const un=a.ps.filter(p=>p.u).slice(-4).map(p=>'<div class="item"><span class="t">'+md(ds(p.u))+' ～ '+md(ds(p.s))+' 之間開始 <span class="mute">估算 '+md(ds(p.t))+'</span></span></div>').join('');
+  const cls=s=>{const n=dn(s);if(db.period[s])return'p';if(db.pmaybe[s])return'mb';let c='';
+    if(n>=t){if(a.pr.some(p=>n>=p.s&&n<=p.e))c='pred';else if(a.pr.some(p=>n>=p.ws&&n<=p.we))c='win';if(a.pr.some(p=>p.ov===n))c+=' ov'}return c};
+  const pm=ui.pmode,mode='<div class="tabs" style="margin-bottom:10px"><button class="'+(pm==='sure'?'on':'')+'" data-a="pmode" data-v="sure">確定有來</button><button class="'+(pm==='maybe'?'on':'')+'" data-a="pmode" data-v="maybe">不確定</button></div><p class="mute" style="margin-top:0">'+(pm==='sure'?'點日期標記「確定有來」的日子。':'點日期標記「可能有來、但不確定」的日子：先用「確定有來」標出記得的那幾天，再切到這裡，從最早的那天往前點出可能已經開始的日子，系統會取中間值估算起始日。')+'</p>';
+  return '<h1>月經週期</h1><div class="card">'+sum+'</div><div class="card">'+mode+monthNav('pm')+'<div class="grid">'+calHtml(ui.pm,'pd',cls)+'</div><p class="mute">實心＝確定的月經日、點線＝不確定、虛線＝預測、綠底＝排卵期（分泌物可能較多）、綠點＝預估排卵日。再點一次可取消。預測僅供參考，不能作為避孕或醫療依據。</p></div>'+(un?'<div class="card"><h2>起始日不確定的紀錄</h2>'+un+'</div>':'');
+}
+const money=n=>'$'+Math.round(+n||0).toLocaleString('en-US');
+const dstr=t=>{const d=new Date(t);return d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate()};
+const W={f:'todo',sort:'new',tag:'',m:null,img:''};
+db.wish=db.wish.map(x=>x.title!=null?x:{id:x.id,title:x.t||'',why:'',price:0,img:'',tags:[],created:Date.now(),done:x.done?1:0,comments:[]});
+const wtags=v=>{const o=[];String(v||'').split(/[,，、]/).forEach(t=>{t=t.trim().slice(0,12);if(t&&!o.includes(t)&&o.length<8)o.push(t)});return o};
+const wtagHtml=x=>(x.tags&&x.tags.length)?'<div class="tags">'+x.tags.map(g=>'<span class="tag">#'+esc(g)+'</span>').join('')+'</div>':'';
+const wp=x=>x.done&&x.actual!==''&&x.actual!=null?x.actual:x.price;
+function wish(){
+  const L=db.wish,todo=L.filter(x=>!x.done&&!x.rejected),done=L.filter(x=>x.done),rej=L.filter(x=>x.rejected);
+  const sum=(a,f)=>a.reduce((t,x)=>t+(+f(x)||0),0),dif=sum(done,x=>x.actual===''||x.actual==null?0:x.price-x.actual),bud=dif>0?'省下 '+money(dif):dif<0?'超支 '+money(-dif):'剛好',live=L.length-rej.length,p=live?Math.round(done.length/live*100):0;
+  const tc={};L.forEach(x=>(x.tags||[]).forEach(t=>tc[t]=(tc[t]||0)+1));if(W.tag&&!tc[W.tag])W.tag='';
+  const S={new:(a,b)=>b.created-a.created,old:(a,b)=>a.created-b.created,lo:(a,b)=>a.price-b.price,hi:(a,b)=>b.price-a.price};
+  const list=L.filter(x=>(!W.tag||(x.tags||[]).includes(W.tag))&&(W.f==='all'||(W.f==='todo'&&!x.done&&!x.rejected)||(W.f==='done'&&x.done)||(W.f==='rej'&&x.rejected))).sort(S[W.sort]);
+  const tab=(v,n)=>'<button class="'+(W.f===v?'on':'')+'" data-a="wtab" data-v="'+v+'">'+n+'</button>';
+  const msg=W.tag?'這個條件下沒有願望，換個標籤或分頁看看。':W.f==='done'?'還沒有完成的願望，加油！':W.f==='rej'?'還沒有駁回的願望。':'還沒有願望，按「新增願望」寫下第一個。';
+  return '<h1>願望清單</h1><p class="mute">想要的東西都是一個任務，買到的那天就是任務完成。</p><div class="hud">'+
+  [['願望總額（進行中）',money(sum(todo,x=>x.price))],['已經花掉的',money(sum(done,wp))],['進行中',todo.length],['已完成',done.length],['駁回總金額',money(sum(rej,x=>x.price))],['預算差額（已完成）',bud]].map(a=>'<div class="st"><small>'+a[0]+'</small><b>'+a[1]+'</b></div>').join('')+'</div>'+
+  '<div class="mute row" style="justify-content:space-between;margin-bottom:2px"><span>任務完成率</span><span>'+p+'%</span></div><div class="bar"><i style="width:'+p+'%"></i></div>'+
+  '<div class="row"><div class="tabs">'+tab('todo','進行中')+tab('done','已完成')+tab('rej','已駁回')+tab('all','全部')+'</div><span style="flex:1"></span><button class="pri" data-a="wnew">＋ 新增願望</button></div>'+
+  '<div class="row mute">排序 <select id="wsort">'+[['new','新到舊'],['old','舊到新'],['lo','金額低到高'],['hi','金額高到低']].map(a=>'<option value="'+a[0]+'"'+(W.sort===a[0]?' selected':'')+'>'+a[1]+'</option>').join('')+'</select> 標籤 <select id="wtag"><option value="">全部</option>'+Object.keys(tc).sort().map(t=>'<option value="'+esc(t)+'"'+(W.tag===t?' selected':'')+'>'+esc(t)+' ('+tc[t]+')</option>').join('')+'</select></div>'+
+  (list.length?'<div class="board">'+list.map(x=>'<button class="wc'+(x.done?' done':'')+(x.rejected?' rej':'')+'" data-a="wopen" data-id="'+x.id+'">'+(x.done?'<span class="stamp">已完成</span>':'')+(x.rejected?'<span class="stamp r">已駁回</span>':'')+(x.img?'<img src="'+x.img+'" alt="">':'')+'<h3>'+esc(x.title)+'</h3>'+(x.why?'<p>'+esc(x.why)+'</p>':'')+wtagHtml(x)+'<div class="mute">'+dstr(x.created)+(x.done&&x.doneAt?' → '+dstr(x.doneAt):'')+'</div><div class="meta"><span>'+money(wp(x))+'</span><span class="chip">💬 '+(x.comments||[]).length+'</span></div></button>').join('')+'</div>':'<div class="card mute" style="text-align:center">'+msg+'</div>');
+}
+function wmodal(){
+  const m=W.m,el=$('#modal');
+  if(!m){el.classList.remove('on');el.innerHTML='';return}
+  const x=m.id&&db.wish.find(y=>y.id===m.id);let h='';
+  const back=x?'<button data-a="wopen" data-id="'+x.id+'">取消</button>':'<button data-a="wclose">取消</button>';
+  if(m.t==='form'){
+    const tg=[...new Set(db.wish.flatMap(y=>y.tags||[]))],cur=x?(x.tags||[]):[];
+    h='<h2>'+(x?'編輯願望':'新增願望')+'</h2><label>我想要什麼？<input type="text" id="fT" maxlength="60" placeholder="例如：離子夾" value="'+esc(x?x.title:'')+'"></label>'+
+    '<label>為什麼想要？<textarea id="fW" placeholder="它會讓我的生活變好在哪？">'+esc(x?x.why:'')+'</textarea></label>'+
+    '<label>預計金額<input type="number" id="fP" min="0" inputmode="numeric" value="'+esc(x?x.price:'')+'"></label>'+
+    '<label>標籤（選填，用逗號分隔）<input type="text" id="fG" value="'+esc(cur.join(', '))+'"></label><div class="tags" style="margin-top:8px">'+tg.map(t=>'<button type="button" class="tag pick'+(cur.includes(t)?' on':'')+'" data-a="wpick" data-t="'+esc(t)+'">'+esc(t)+'</button>').join('')+'</div>'+
+    '<label>圖片（選填）<input type="file" id="fI" accept="image/*"></label><img class="pre" id="pre" alt="" '+(W.img?'src="'+W.img+'"':'hidden')+'>'+
+    '<div class="row">'+back+'<button class="pri" data-a="wsave">'+(x?'儲存':'加入清單')+'</button></div>';
+  }else if(!x){W.m=null;return wmodal()}
+  else if(m.t==='show'){
+    const cms=(x.comments||[]).map(c=>'<div class="cm"><small>'+dstr(c.at)+'</small>'+esc(c.t)+'</div>').join('')||'<p class="mute">還沒有留言</p>';
+    h=(x.img?'<img src="'+x.img+'" alt="">':'')+'<h2>'+esc(x.title)+(x.done?' ✅':'')+(x.rejected?' 🚫':'')+'</h2>'+wtagHtml(x)+
+    '<div class="kv"><small>為什麼想要</small>'+(esc(x.why)||'（沒寫理由）')+'</div>'+
+    '<div class="kv"><small>'+(x.done?'預計金額 → 實際花費':'預計金額')+'</small><b>'+money(x.price)+(x.done&&x.actual!==''&&x.actual!=null?' → '+money(x.actual):'')+'</b></div>'+
+    '<div class="kv"><small>新增於 '+dstr(x.created)+(x.done?'・完成於 '+dstr(x.doneAt):'')+(x.rejected?'・駁回於 '+dstr(x.rejectedAt):'')+'</small></div>'+
+    (x.done?'<div class="kv"><small>💌 給過去的我</small>'+(esc(x.note)||'（沒有留話）')+'</div>':'')+
+    (x.rejected?'<div class="kv"><small>📝 駁回理由</small>'+(esc(x.rejectNote)||'（沒有寫理由）')+'</div>':'')+
+    '<label class="mute">留言</label>'+cms+'<div class="add"><input type="text" id="cI" placeholder="想說點什麼…" maxlength="200"><button data-a="wcm" data-id="'+x.id+'">送出</button></div>'+
+    '<div class="row"><button data-a="wdel" data-id="'+x.id+'">刪除</button><button data-a="wedit" data-id="'+x.id+'">編輯</button>'+((x.done||x.rejected)?'<button data-a="wun" data-id="'+x.id+'">改回進行中</button>':'<button data-a="wrej" data-id="'+x.id+'">駁回</button><button class="pri" data-a="wfin" data-id="'+x.id+'">任務完成！</button>')+'<button data-a="wclose">關閉</button></div>';
+  }else if(m.t==='fin'){
+    h='<h2>🎉 買給自己了！</h2><label>實際花了多少？<input type="number" id="aP" min="0" inputmode="numeric" value="'+esc(x.price)+'"></label><label>留一段話給過去的自己<textarea id="aN" placeholder="你當時猜到會等這麼久嗎？現在拿到了，感覺怎麼樣？"></textarea></label><div class="row">'+back+'<button class="pri" data-a="wfinok" data-id="'+x.id+'">完成任務</button></div>';
+  }else if(m.t==='rej'){
+    h='<h2>🚫 駁回這個願望</h2><p class="mute">不買也是一種勝利，省下 '+money(x.price)+'。</p><label>為什麼不想要了？（選填）<textarea id="rN"></textarea></label><div class="row">'+back+'<button class="pri" data-a="wrejok" data-id="'+x.id+'">確定駁回</button></div>';
+  }
+  el.innerHTML='<div class="sheet">'+h+'</div>';el.classList.add('on');
+}
+function cd(){
+  const l=db.cd.slice().sort((a,b)=>a.date<b.date?-1:1);
+  return '<h1>倒數計時</h1><div class="card">'+(l.length?l.map(c=>{const n=dn(c.date)-dn(today());return '<div class="item"><span class="t"><b>'+esc(c.name)+'</b> <span class="mute">'+c.date+'</span></span><span class="chip">'+(n<0?'已過 '+(-n)+' 天':n===0?'今天':'還有 '+n+' 天')+'</span><button class="x" data-a="cdel" data-id="'+c.id+'" aria-label="刪除">✕</button></div>'}).join(''):'<p class="mute">例如：期末考、生日、旅行。新增後會顯示在首頁上方。</p>')+'<div class="add"><input type="text" id="cn" placeholder="名稱，例如：期末考" maxlength="30"><input type="date" id="cdt"><button class="pri" data-a="cadd">新增</button></div></div>';
+}
+function tools(){
+  return '<h1>小工具管理</h1><div class="card"><p class="mute">勾選要出現在側欄的小工具，取消勾選只是隱藏，資料不會刪除。</p>'+Object.keys(TOOLS).map(k=>'<label class="tg"><input type="checkbox" data-a="tool" data-v="'+k+'"'+(db.tools[k]?' checked':'')+'>'+TOOLS[k]+'</label>').join('')+'</div>';
+}
+const V={home,diary,period,wish,cd,tools};
+
+function syncRemind(){
+  let ch=false;const a=db.tools.period?pAn():null,key=a&&a.ps.length?ds(a.pr[0].s):'',n0=db.todos.length;
+  db.todos=db.todos.filter(x=>!(x.auto==='period'&&!x.done&&x.key!==key));
+  if(db.todos.length!==n0)ch=true;
+  if(key){const n=dn(today()),s=a.pr[0].s,d=s-n;
+    if(d<=3&&d>=-2&&!db.premind[key]){
+      db.todos.push({id:uid(),t:'🌸 月經預計 '+md(key)+' 開始（'+(d>0?d+' 天後':d===0?'今天':'已延後 '+(-d)+' 天')+'），記得準備衛生用品',date:today(),c:COL[0],done:0,auto:'period',key});
+      db.premind[key]=1;ch=true}}
+  return ch;
+}
+function render(){
+  if(syncRemind())save();
+  if(!V[ui.view]||(TOOLS[ui.view]&&!db.tools[ui.view]))ui.view='home';
+  const nav=(v,n)=>'<button data-a="go" data-v="'+v+'" class="'+(ui.view===v?'on':'')+'">'+n+'</button>';
+  $('#side').innerHTML='<b>我的小本本</b>'+nav('home','首頁')+'<small>小工具</small>'+Object.keys(TOOLS).filter(k=>db.tools[k]).map(k=>nav(k,TOOLS[k])).join('')+'<small>設定</small>'+nav('tools','小工具管理');
+  $('#main').innerHTML=V[ui.view]();
+  document.body.classList.remove('open');wmodal();
+}
+
+/* ---------- actions ---------- */
+const byId=(l,id)=>db[l].find(x=>x.id===id);
+function addTodo(){const v=$('#nt').value.trim();if(!v)return;db.todos.push({id:uid(),t:v,date:ui.sel,c:ui.nc,done:0});save();render();$('#nt').focus()}
+function readImg(f){return new Promise(res=>{const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>{const k=Math.min(1,900/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=i.width*k;c.height=i.height*k;c.getContext('2d').drawImage(i,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',.72))};i.onerror=()=>res(null);i.src=r.result};r.readAsDataURL(f)})}
+document.addEventListener('click',async e=>{
+  if(e.target.id==='modal'){W.m=null;return render()}
+  const b=e.target.closest('[data-a]');if(!b)return;
+  const a=b.dataset.a,v=b.dataset.v,id=b.dataset.id;
+  if(a==='menu')return document.body.classList.toggle('open');
+  if(a==='go'){ui.view=v;ui.de=null}
+  else if(a==='sel')ui.sel=v;
+  else if(a==='wk')ui.w=v==='0'?0:ui.w+ +v;
+  else if(a==='nc'){ui.nc=v;const i=$('#nt');const t=i?i.value:'';render();if(t)$('#nt').value=t;return}
+  else if(a==='add')return addTodo();
+  else if(a==='tg'){const x=byId('todos',id);x.done=x.done?0:1;save()}
+  else if(a==='ed'){const x=byId('todos',id),n=prompt('編輯待辦',x.t);if(n&&n.trim()){x.t=n.trim();save()}}
+  else if(a==='col'){const x=byId('todos',id);x.c=COL[(COL.indexOf(x.c)+1)%COL.length];save()}
+  else if(a==='del'){db.todos=db.todos.filter(x=>x.id!==id);save()}
+  else if(a==='mv'){const d=ui[b.dataset.k];ui[b.dataset.k]=new Date(d.getFullYear(),d.getMonth()+ +v,1)}
+  else if(a==='de'){ui.de=v;const x=db.diary[v];ui.draft={t:x?x.t:'',imgs:x?x.imgs.slice():[]}}
+  else if(a==='dsave'){const t=$('#dt').value;if(!t.trim()&&!ui.draft.imgs.length)delete db.diary[ui.de];else db.diary[ui.de]={t,imgs:ui.draft.imgs};save();ui.de=null}
+  else if(a==='dclose')ui.de=null;
+  else if(a==='ddel'){if(!confirm('確定刪除這篇日記？'))return;delete db.diary[ui.de];save();ui.de=null}
+  else if(a==='rmimg'){ui.draft.t=$('#dt').value;ui.draft.imgs.splice(+v,1)}
+  else if(a==='pmode')ui.pmode=v;
+  else if(a==='pd'){if(ui.pmode==='maybe'){if(!db.period[v]){if(db.pmaybe[v])delete db.pmaybe[v];else db.pmaybe[v]=1}}else if(db.period[v])delete db.period[v];else{db.period[v]=1;delete db.pmaybe[v]}save()}
+  else if(a==='wtab')W.f=v;
+  else if(a==='wnew'){W.m={t:'form'};W.img=''}
+  else if(a==='wopen')W.m={t:'show',id};
+  else if(a==='wclose')W.m=null;
+  else if(a==='wedit'){W.m={t:'form',id};W.img=byId('wish',id).img||''}
+  else if(a==='wpick'){const l=wtags($('#fG').value),i=l.indexOf(b.dataset.t);if(i>-1)l.splice(i,1);else l.push(b.dataset.t);$('#fG').value=l.join(', ');b.classList.toggle('on');return}
+  else if(a==='wsave'){const t=$('#fT').value.trim();if(!t){alert('先寫下想要什麼吧');return}
+    const x=W.m.id?byId('wish',W.m.id):{id:uid(),created:Date.now(),done:0,comments:[]};
+    Object.assign(x,{title:t,why:$('#fW').value.trim(),price:+$('#fP').value||0,img:W.img,tags:wtags($('#fG').value)});
+    if(!W.m.id)db.wish.push(x);save();W.m={t:'show',id:x.id}}
+  else if(a==='wcm'){const t=$('#cI').value.trim();if(!t)return;const x=byId('wish',id);(x.comments=x.comments||[]).push({t,at:Date.now()});save()}
+  else if(a==='wfin')W.m={t:'fin',id};
+  else if(a==='wfinok'){const x=byId('wish',id);x.done=1;x.doneAt=Date.now();x.actual=$('#aP').value===''?'':+$('#aP').value;x.note=$('#aN').value.trim();save();W.m={t:'show',id}}
+  else if(a==='wrej')W.m={t:'rej',id};
+  else if(a==='wrejok'){const x=byId('wish',id);x.rejected=1;x.rejectedAt=Date.now();x.rejectNote=$('#rN').value.trim();save();W.m={t:'show',id}}
+  else if(a==='wun'){const x=byId('wish',id);x.done=0;x.rejected=0;save()}
+  else if(a==='wdel'){if(!confirm('確定要刪除這個願望嗎？'))return;db.wish=db.wish.filter(x=>x.id!==id);save();W.m=null}
+  else if(a==='cadd'){const name=$('#cn').value.trim(),date=$('#cdt').value;if(!name||!date)return alert('請填名稱和日期');db.cd.push({id:uid(),name,date});save()}
+  else if(a==='cdel'){db.cd=db.cd.filter(x=>x.id!==id);save()}
+  else if(a==='tool'){db.tools[v]=b.checked?1:0;save()}
+  render();
+});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='nt')addTodo();if(e.key==='Enter'&&e.target.id==='cI')document.querySelector('[data-a=wcm]').click();if(e.key==='Escape'&&W.m){W.m=null;render()}});
+document.addEventListener('input',e=>{if(e.target.id==='dt'&&ui.draft)ui.draft.t=e.target.value});
+document.addEventListener('change',async e=>{
+  if(e.target.id==='im'){ui.draft.t=$('#dt').value;for(const f of e.target.files){const s=await readImg(f);if(s)ui.draft.imgs.push(s)}render()}
+  if(e.target.id==='fI'){const f=e.target.files[0];if(!f)return;const d=await readImg(f);if(d){W.img=d;const p=$('#pre');p.src=d;p.hidden=false}}
+  if(e.target.id==='wsort'){W.sort=e.target.value;render()}
+  if(e.target.id==='wtag'){W.tag=e.target.value;render()}
+});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&syncRemind()){save();render()}});
+render();
+</script>
+</body>
+</html>
